@@ -1,0 +1,21 @@
+{
+  "extends": "rackt",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "valid-jsdoc": 2,
+    "react/jsx-uses-react": 1,
+    "react/jsx-no-undef": 2,
+    "react/jsx-uses-vars": 2,
+    "react/wrap-multilines": 2,
+    // TODO is this needed?
+    "no-console": 1
+  },
+  "plugins": [
+    "react"
+  ],
+}
