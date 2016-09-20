@@ -12,6 +12,6 @@ const rules = [
 ]
 
 render(
-  <CellularAutomaton cellsNum={100} rules={rules} />,
+  <CellularAutomaton cellsNum={30} rowsNum={30} rules={rules} />,
   document.getElementById( 'cellular-automaton' )
 )

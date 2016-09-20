@@ -5,7 +5,8 @@ import Cell from './Cell'
 class CellularAutomaton extends Component {
 
   componentWillMount() {
-    const { cellsNum, rules } = this.props
+
+    const { cellsNum, rowsNum, rules } = this.props
 
     const rulesSet = new Set(
       rules.map( row => row.toString() )
@@ -15,24 +16,49 @@ class CellularAutomaton extends Component {
 
     const firstRow = []
     for (let i = 0; i < cellsNum; i++) {
-      firstRow.push(this.randomBoolean())
+      firstRow.push({isActive: this.randomBoolean(), isFlipped: false})
     }
     matrix.push(firstRow)
 
-    for (let i = 0; i < 50; i++) {
+    let prevRow = firstRow
+    for (let i = 0; i < rowsNum - 1; i++) {
       const row = []
       for (let j = 0; j < cellsNum; j++) {
-        const prevRow = matrix[matrix.length - 1]
         let ruleToApply = []
-        ruleToApply.push(prevRow[j === 0 ? prevRow.length - 1 : j - 1])
-        ruleToApply.push(prevRow[j])
-        ruleToApply.push(prevRow[j === prevRow.length - 1 ? 0 : j + 1])
-        const status = rulesSet.has(ruleToApply.toString())
-        row.push(status)
+        ruleToApply.push(prevRow[j === 0 ? prevRow.length - 1 : j - 1].isActive)
+        ruleToApply.push(prevRow[j].isActive)
+        ruleToApply.push(prevRow[j === prevRow.length - 1 ? 0 : j + 1].isActive)
+        const isActive = rulesSet.has(ruleToApply.toString())
+        row.push({isActive, isFlipped: false})
       }
       matrix.push(row)
+      prevRow = row
     }
-    this.setState( { matrix } )
+
+    this.setState( { matrix , displayedRows : 0} )
+
+  }
+
+  componentDidMount() {
+
+    const { rowsNum } = this.props
+
+    const intervalId = setInterval(
+      () => {
+        const {displayedRows} = this.state
+        if (displayedRows === rowsNum) {
+          clearInterval(intervalId)
+          return
+        }
+        const newMatrix = this.state.matrix.slice(0)
+        newMatrix[displayedRows]
+          .filter(cell => cell.isActive)
+          .forEach(cell => cell.isFlipped = true)
+        this.setState({displayedRows: this.state.displayedRows + 1, matrix: newMatrix})
+      }
+      , 100
+    )
+
   }
 
   randomBoolean() {
@@ -44,7 +70,8 @@ class CellularAutomaton extends Component {
     const rows = this.state.matrix.map(
       ( row, rowId ) => (
         <tr key={rowId}>
-          {row.map( ( cell, cellId ) => <Cell key={cellId} status={cell} /> )}
+          {row.map( ( cell, cellId ) =>
+            <Cell key={cellId} isActive={cell.isActive} isFlipped={cell.isFlipped} /> )}
         </tr>
       )
     )
