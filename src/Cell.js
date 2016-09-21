@@ -15,11 +15,11 @@ class Cell extends Component {
 
     const { isActive, isFlipped = false } = this.props
 
-    // to restrain the generated DOM, an inactive cell
-    // (i.e. a cell without flip effect) has a different markup
+    // to restrain the generated DOM, inactive cells (i.e. the ones that don't
+    // have flip effect) have different markup
     if (isActive) {
       return (
-        <td className={'flip-container active ' + (isFlipped ? 'hover' : '') }>
+        <td className={'flip-container active ' + (isFlipped ? 'flipped' : '') }>
           <div className="flipper">
             <div className="front"></div>
             <div className="back"></div>
